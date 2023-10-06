@@ -1,6 +1,0 @@
-fastapi
-uvicorn[standard]
-jinja2
-asyncpg
-ormar
-psycopg2-binary

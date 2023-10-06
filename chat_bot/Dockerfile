@@ -9,8 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-COPY requirements3.txt .
-RUN pip install -r requirements3.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
