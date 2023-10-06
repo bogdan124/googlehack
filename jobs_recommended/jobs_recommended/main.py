@@ -51,10 +51,3 @@ async def read_root(request_data: TextRequest):
 
     
     return {"jobs": similar_jobs.drop_duplicates(subset="Job Title") }
-
-
-if __name__ == "__main__":
-    import uvicorn
-
-    # Start the FastAPI application
-    uvicorn.run(app, host="0.0.0.0", port=8090)

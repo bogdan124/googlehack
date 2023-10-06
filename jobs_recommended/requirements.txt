@@ -1,1 +1,9 @@
 spacy==3.7.1
+fastapi
+uvicorn[standard]
+jinja2
+asyncpg
+ormar
+psycopg2-binary
+pandas
+scikit-learn

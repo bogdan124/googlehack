@@ -5,7 +5,7 @@ version: '3.8'
 services:
   web:
     build: web/
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0 --port 8080 --reload'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn web.main:app --host 0.0.0.0 --port 8080 --reload'
     volumes:
       - .:/app
     ports:
@@ -17,7 +17,7 @@ services:
 
   jobs_recommended:
     build: jobs_recommended/
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0 --port 8090 --reload'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn jobs_recommended.main:app --host 0.0.0.0 --port 8090 --reload'
     volumes:
       - .:/app
     ports:
@@ -29,7 +29,7 @@ services:
 
   chat_bot:
     build: chat_bot/
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn main:app --host 0.0.0.0 --port 8070 --reload'
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; uvicorn chat_bot.main:app --host 0.0.0.0 --port 8070 --reload'
     volumes:
       - .:/app
     ports:

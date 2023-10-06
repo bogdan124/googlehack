@@ -14,3 +14,4 @@ RUN pip install -r requirements.txt
 
 # copy project
 COPY . .
+COPY /jobs_recommended/ /jobs_recommended/

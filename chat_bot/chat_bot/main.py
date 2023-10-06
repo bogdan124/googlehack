@@ -92,9 +92,3 @@ async def read_root(request_data: TextRequest):
         return {"response": "bye!"}
     return {"response": random.choice(responses) }
 
-
-if __name__ == "__main__":
-    import uvicorn
-
-    # Start the FastAPI application
-    uvicorn.run(app, host="0.0.0.0", port=8070)
