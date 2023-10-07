@@ -29,8 +29,6 @@ app = FastAPI()
 class TextRequest(BaseModel):
     text: str
 
-
-
 # Define a function to run on startup
 async def on_startup():
     return {"knn":knn }
@@ -48,6 +46,4 @@ async def read_root(request_data: TextRequest):
     similar_jobs_indices = knn.kneighbors(text_vectorized, n_neighbors=13, return_distance=False)
     # Get the job titles and descriptions of the similar jobs
     similar_jobs = jobs_df.iloc[similar_jobs_indices[0]]
-
-    
     return {"jobs": similar_jobs.drop_duplicates(subset="Job Title") }

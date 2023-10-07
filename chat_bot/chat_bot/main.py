@@ -38,9 +38,14 @@ app = FastAPI()
 class TextRequest(BaseModel):
     text: str
 
+class KnowledgeRequest(BaseModel):
+    question :str
+    context :str
+
 @app.post("/")
 async def read_root(request_data: TextRequest):
     text = request_data.text     
+    print(request_data.text  )
     stemmer = LancasterStemmer()
     with open('intents.json') as file:
         data = json.load(file)
@@ -92,3 +97,22 @@ async def read_root(request_data: TextRequest):
         return {"response": "bye!"}
     return {"response": random.choice(responses) }
 
+@app.post("/knowledge")
+def knowledge_chatbot(request_data: KnowledgeRequest):
+    question = request_data.question     
+    context = request_data.context
+    from transformers import pipeline
+
+    # Load the question-answering model
+    qa_pipeline = pipeline("question-answering", model="bert-large-uncased-whole-word-masking-finetuned-squad", tokenizer="bert-large-uncased-whole-word-masking-finetuned-squad")
+
+    # Define a function to answer questions
+    def answer_question(question, context):
+        result = qa_pipeline(question=question, context=context)
+        return result["answer"]
+    # Ask a question
+    answer = answer_question(question, context)
+    return {
+        "question":question,
+        "answer": answer
+    }
