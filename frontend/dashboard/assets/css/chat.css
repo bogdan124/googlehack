@@ -7,16 +7,6 @@
   font-family: "Poppins", sans-serif;
 }
 :root {
-  --text-color: #FFFFFF;
-  --icon-color: #ACACBE;
-  --icon-hover-bg: #5b5e71;
-  --placeholder-color: #dcdcdc;
-  --outgoing-chat-bg: #343541;
-  --incoming-chat-bg: #444654;
-  --outgoing-chat-border: #343541;
-  --incoming-chat-border: #444654;
-}
-.light-mode {
   --text-color: #343541;
   --icon-color: #a9a9bc;
   --icon-hover-bg: #f1f1f3;
@@ -25,6 +15,16 @@
   --incoming-chat-bg: #F7F7F8;
   --outgoing-chat-border: #FFFFFF;
   --incoming-chat-border: #D9D9E3;
+}
+.dark-mode {
+  --text-color: #FFFFFF;
+  --icon-color: #ACACBE;
+  --icon-hover-bg: #5b5e71;
+  --placeholder-color: #dcdcdc;
+  --outgoing-chat-bg: #343541;
+  --incoming-chat-bg: #444654;
+  --outgoing-chat-border: #343541;
+  --incoming-chat-border: #444654;
 }
 body {
   background: var(--outgoing-chat-bg);
@@ -150,14 +150,15 @@ span.material-symbols-rounded {
 
 /* Typing container styling */
 .typing-container {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   width: 100%;
   display: flex;
   padding: 20px 10px;
-  justify-content: center;
+  justify-content: left;
   background: var(--outgoing-chat-bg);
   border-top: 1px solid var(--incoming-chat-border);
+  z-index: -1;
 }
 .typing-container .typing-content {
   display: flex;
@@ -187,6 +188,20 @@ span.material-symbols-rounded {
 .typing-textarea textarea::placeholder {
   color: var(--placeholder-color);
 }
+.typing-textarea btn {
+  resize: none;
+  height: 55px;
+  width: 55px;
+  border: none;
+  padding: 15px 45px 15px 20px;
+  justify-content: center;
+  color: var(--text-color);
+  font-size: 1rem;
+  border-radius: 4px;
+  background: var(--incoming-chat-bg);
+  outline: 1px solid var(--incoming-chat-border);
+}
+
 .typing-content span {
   width: 55px;
   height: 55px;

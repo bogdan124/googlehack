@@ -11,8 +11,8 @@ const loadDataFromLocalstorage = () => {
     // Load saved chats and theme from local storage and apply/add on the page
     const themeColor = localStorage.getItem("themeColor");
 
-    document.body.classList.toggle("light-mode", themeColor === "light_mode");
-    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+    document.body.classList.toggle("light-mode", themeColor === "dark_mode");
+    themeButton.innerText = document.body.classList.contains("light-mode") ? "light_mode" : "dark_mode";
 
     const defaultText = `<div class="default-text">
                             <h1>Hello! 👋</h1>
@@ -118,7 +118,7 @@ const handleOutgoingChat = () => {
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
     setTimeout(showTypingAnimation, 500);
 }
-
+/*
 deleteButton.addEventListener("click", () => {
     // Remove the chats from local storage and call loadDataFromLocalstorage function
     if(confirm("Sigur doriți să ștergeți toate chaturile?")) {
@@ -126,14 +126,15 @@ deleteButton.addEventListener("click", () => {
         loadDataFromLocalstorage();
     }
 });
-
+*/
+/*
 themeButton.addEventListener("click", () => {
     // Toggle body's class for the theme mode and save the updated theme to the local storage 
-    document.body.classList.toggle("light-mode");
+    document.body.classList.toggle("dark-mode");
     localStorage.setItem("themeColor", themeButton.innerText);
-    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+    themeButton.innerText = document.body.classList.contains("dark-mode") ? "light_mode" : "dark_mode";
 });
-
+*/
 const initialInputHeight = chatInput.scrollHeight;
 
 chatInput.addEventListener("input", () => {   
