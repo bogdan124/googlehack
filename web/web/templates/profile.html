@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SigTeam Job Recommender System | #2030 Hackathon</title>
+
+  <!-- CSS Links -->
+  <link rel="stylesheet" href="static/css/sidebar2.css" />
+  <link rel="stylesheet" href="static/css/avatar.css" />
+  <link rel="stylesheet" href="static/css/chat.css" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+
+  <!-- JavaScript Links -->
+  <script src="static/js/chat.js"></script>
+  <script src="static/js/chat2.js"></script>
+  <script src="static/js/avatar.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="menu-toggle">
+      <div class="hamburger">
+        <span></span>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+
+      <div class="avatar" id="avatar">
+        <div id="preview">
+          <img src="static/img/zenbo_robot_facial.gif" id="avatar-image" class="avatar_img" />
+        </div>
+        <div class="avatar_upload">
+          <label class="upload_label">Upload
+            <input type="file" id="upload">
+          </label>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <ul class="nav-links">
+          <li>
+            <a href="#" class="menu-item is-active">
+              <i class="bx bx-home-alt-2"></i>
+              <span class="title">Profile</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="menu-item">
+              <i class="bx bx-cog"></i>
+              <span class="title">Settings</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="menu-item">
+              <i class="bx bx-log-out"></i>
+              <span class="title">Log Out</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h1>Welcome, Human</h1>
+
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f0f2f5;
+        }
+
+        .chat-container {
+          max-width: 400px;
+          margin: 20px auto;
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+
+        .chat-header h2 {
+          font-size: 18px;
+          margin: 0;
+        }
+
+        .message-list {
+          padding: 10px;
+          list-style-type: none;
+          display: grid;
+        }
+
+        .message {
+          max-width: 70%;
+          margin: 5px 0;
+          padding: 10px;
+
+          border-radius: 8px;
+        }
+
+        .message.sent {
+          float: right;
+
+        }
+
+        .message-input {
+          position: fixed;
+          bottom: 1px;
+          width: 74%;
+        }
+
+        .message.sent>p {
+          color: white !important;
+        }
+
+        .received {
+          background-color: #f0f2f5;
+          align-self: flex-start;
+        }
+
+        .sent {
+          background-color: #0084ff;
+          color: white;
+          margin-left: 30%;
+          /* Added margin-left to push sent messages to the right */
+          border-radius: 8px;
+        }
+
+        .message-input {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px;
+          border-top: 1px solid #ddd;
+        }
+
+        .message-input input {
+          flex: 1;
+          padding: 8px;
+          border: none;
+          border-radius: 20px;
+          margin-right: 10px;
+          outline: none;
+        }
+
+        .message-input button {
+          background-color: #0084ff;
+          color: #fff;
+          border: none;
+          border-radius: 20px;
+          padding: 8px 16px;
+          cursor: pointer;
+          outline: none;
+        }
+
+        main.content {
+          width: 100%;
+          background: white;
+        }
+
+        .feedback-buttons {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 10px;
+        }
+
+        .feedback-button {
+          background-color: #f0f2f5;
+          color: #0073e6;
+          border: none;
+          border-radius: 10px;
+          padding: 8px 16px;
+          cursor: pointer;
+          outline: none;
+          width: 25%;
+          /* Adjust the width as needed */
+          transition: background-color 0.3s ease-in-out;
+        }
+
+        .feedback-button:hover {
+          background-color: #f0f2f5
+        }
+
+        .feedback-button+.feedback-button {
+          margin-left: 1px;
+        }
+
+        .chatbot-response {
+          background-color: #f0f2f5;
+          padding: 10px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+        }
+
+        .contact-details {
+          border-top: 1px solid #ddd;
+          margin-top: 10px;
+          padding-top: 10px;
+        }
+
+        .contact-details p {
+          margin: 0;
+        }
+      </style>
+
+
+      <ul class="message-list" id="message_id_put">
+        <li class="message received">
+          <p>Hello there!</p>
+        </li>
+        <li class="message sent">
+          <p>Hi! How can I help you?</p>
+        </li>
+        <!-- Add more messages here -->
+      </ul>
+      <div class="message-input">
+        <input type="text" id="text_chatbot" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+
+      <script>
+        function sendMessage() {
+          let text = document.getElementById("text_chatbot").value;
+          let messageList = document.getElementById("message_id_put");
+
+          // Create and append the user's message
+          let userMessage = document.createElement("li");
+          userMessage.classList.add("message", "sent");
+          userMessage.innerHTML = `<p>${text}</p>`;
+          messageList.appendChild(userMessage);
+
+          // Clear the input field
+          document.getElementById("text_chatbot").value = "";
+
+          // Simulate a response from the chatbot
+          setTimeout(function () {
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+                        <div class="chatbot-response">
+                            <p>This is a sample chatbot response.</p>
+                            <div class="contact-details">
+                                <p><strong>Full Name:</strong> Johnny </p>
+                                <p><strong>Phone Number:</strong> +1234567890</p>
+                                <p><strong>Price:</strong> $50</p>
+                            </div>
+                        </div>
+                    `;
+            messageList.appendChild(chatbotResponse);
+
+            // Feedback buttons
+            let feedbackButtonsDiv = document.createElement("div");
+            feedbackButtonsDiv.classList.add("feedback-buttons");
+            let feedbackButton1 = document.createElement("button");
+            let feedbackButton2 = document.createElement("button");
+            feedbackButton1.classList.add("feedback-button");
+            feedbackButton2.classList.add("feedback-button");
+            feedbackButton1.textContent = "Good";
+            feedbackButton2.textContent = "Bad";
+            feedbackButtonsDiv.appendChild(feedbackButton1);
+            feedbackButtonsDiv.appendChild(feedbackButton2);
+            messageList.appendChild(feedbackButtonsDiv);
+          }, 1000); // Simulated delayed response (1 second)
+        }
+
+      </script>
+      <!-- 
+        <div class="typing-container">
+          <div class="typing-content">
+            <div class="typing-textarea">
+              <textarea id="chat-input" spellcheck="false" placeholder="Enter a prompt here" required></textarea>
+              <btn id="send-btn">
+                <i class="bx bx-send"></i>
+              </btn>
+              <span id="send-btn" style="color:blue">
+                falavia
+                <i class="bx bx-send"></i>
+              </span>             
+            </div>
+          </div>
+        </div>Typing container -->
+    </main>
+  </div>
+
+  <script>
+    const menu_toggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    menu_toggle.addEventListener('click', () => {
+      menu_toggle.classList.toggle('is-active');
+      sidebar.classList.toggle('is-active');
+    });
+  </script>
+</body>
+
+</html>

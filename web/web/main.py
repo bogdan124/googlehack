@@ -1,14 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 import requests
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report, confusion_matrix
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 import json
 
 app = FastAPI()
 
+# Mount the templates and static directories
+app.mount("/static", StaticFiles(directory="web/static"), name="static")
+templates = Jinja2Templates(directory="web/templates")
 
 def train_and_predict(train, texts, labels):
     # Convert labels to numerical values
@@ -117,6 +122,14 @@ class TextRequest(BaseModel):
     text: str
     metadata: list[str]
 
+class TextLogin(BaseModel):
+    mail: str
+    password: str
+
+class TextRegister(BaseModel):
+    mail: str
+    password: str
+
 @app.post("/chat")
 def chat(request_data: TextRequest):
     text = request_data.text   
@@ -141,3 +154,24 @@ def chat(request_data: TextRequest):
         else:
             context = "Hi"
             return {"text": request_information_model(text,context) }
+
+
+@app.post("/api/login")
+async def api_login(request_data: TextLogin):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.post("/api/register")
+async def api_register(request_data: TextRegister):
+    return templates.TemplateResponse("login.html", {"request": request})
+
+@app.get("/")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/profile")
+async def index(request: Request):
+    return templates.TemplateResponse("profile.html", {"request": request})
+
+@app.get("/auth")
+async def login(request: Request):
+    return templates.TemplateResponse("auth.html", {"request": request})
