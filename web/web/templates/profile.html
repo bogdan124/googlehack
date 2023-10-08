@@ -343,6 +343,38 @@
           }
         });
 
+        function sendRedditServer(jobs) {
+          const url = 'http://0.0.0.0:8080/api/reddit';
+          const data = {
+            text: jobs
+          };
+
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              // Add any other headers if needed
+            },
+            body: JSON.stringify(data)
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+
+              return response.json(); // You can use response.text() for plain text response
+            })
+            .then(data => {
+              // Handle the JSON data here
+              console.log(data);
+              appendDataSimple(data.text);
+            })
+            .catch(error => {
+              // Handle any errors that occurred during the fetch
+              console.error('Fetch error:', error);
+            });
+        }
+
         function sendMessage() {
 
           let text = document.getElementById("text_chatbot").value;
@@ -421,7 +453,34 @@
               <b>${jobs_data["Job Title"][key]}</b><br/>
               <p><button class="feedback-button token more-data">More</button>
                 <button class="feedback-button token more-data" onclick='specialist()'>Specialist</button>
-                <button class="feedback-button token more-data" onclick='reddit_api()'>Groups</button></p> 
+                <button class="feedback-button token more-data" onclick="reddit_api('${jobs_data["Job Title"][key]}')">Groups</button></p> 
+            </li>
+          `;
+            console.log(jobs_data["Job Title"][key], jobs_data["Job Description"][key]);
+            messageList.appendChild(chatbotResponse);
+
+          }
+        }
+
+        function reddit_api(jobs) {
+          reddit_data = sendRedditServer(jobs);
+          console.log(jobs)
+          appendRedditGRoups(reddit_data);
+        }
+
+        function appendRedditGRoups(groups) {
+          speechText("Here are some groups waiting for you!");
+          console.log(jobs_data["Job Description"]);
+          let messageList = document.getElementById("message_id_put");
+          // Simulate a response from the chatbot
+          for (let i = 0; i < groups.length; i++) {
+
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+            <li class="message received">
+              <b>${groups[i].title}</b><br/>
+              Subscribers:${groups[i].subscribers}
             </li>
           `;
             console.log(jobs_data["Job Title"][key], jobs_data["Job Description"][key]);

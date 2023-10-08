@@ -132,6 +132,44 @@ class TextRegister(BaseModel):
     mail: str
     password: str
 
+class TextReddit(BaseModel):
+    jobs: str
+
+# Define the URL and headers
+def reddit(paramter):
+  headers = {
+    "User-Agent": "ChangeMeClient/0.1 by YourUsername",
+    "Cookie":"csv=2; edgebucket=LZMx5O2w9aXIB4hmyx; csrf_token=d3f56f539b60608ba51c0741e01948be; token_v2=eyJhbGciOiJSUzI1NiIsImtpZCI6IlNIQTI1NjpzS3dsMnlsV0VtMjVmcXhwTU40cWY4MXE2OWFFdWFyMnpLMUdhVGxjdWNZIiwidHlwIjoiSldUIn0.eyJzdWIiOiJsb2lkIiwiZXhwIjoxNjk2Nzc4Njk3Ljk1MDY3NywiaWF0IjoxNjk2NjkyMjk3Ljk1MDY3NywianRpIjoiR2I3SE5HVExmelo1REpoY2RWTy14bzcxMXBYOWtRIiwiY2lkIjoiMFItV0FNaHVvby1NeVEiLCJsaWQiOiJ0Ml9sYTFydnB6cTkiLCJsY2EiOjE2OTY2ODg2OTIyOTYsInNjcCI6ImVKeGtrZEdPdERBSWhkLWwxejdCX3lwX05odHNjWWFzTFFhb2szbjdEVm9jazcwN2NENHBIUDhuS0lxRkxFMnVCS0c0eXBsNzgxNFdMSVZNMDVRR3RheEFrcWIwSkRXV2Q1b1NGV3hHNW5LbEhTczBlR0NhVXVXU3VTMzB1TFFKemQxWTlPekVxTXBsNVVGVm9QVlVqVzFNWVh0aWZMT3gycENLNjNJcUUxZ1d5bWZ4b2g5eTlkWS1mN2JmaEhZd3JLZ0tEX1RPdUZWd1lfSERGSFpfVDAxNnRpNVkxTjdyUVdxZjYzRzc5bG16ME96Y2ZxN25yNDFrWEk2aC1RbjI3NjVmUWdjZWVWNW0xQUdNV01PUE11eklPdnlyRHFCeVFRRmpDZUxUQ09USzVkdF9DYlpyMDdfRzdSTV9mRFBpcGpmODFnelVjd25pMEtmeDlSc0FBUF9fSV9yYXVRIiwiZmxvIjoxfQ.gEq_xNYv7iH9aL8c1VOHjYCyNUeRU-fvpR83K3Fo0DCTyEOMggaf-T6qNqbujWxbBSihbKKFW5QSs1_VZQ55j4B3LjsCHUcmGDQFGaWJmZ06uiaVjbFEIABFILfGI0L09SiovqhTnjLUjoNBB3z8xUgO8zpWz4PYiM4ojh04_oqaoYP4nk_QYPjuABZbuNAkScxIvL9KpRD2ctHzhkkYZF41dDSg62i9DTFlgC3xXsoJuxQapNJ-qHw29h5ZoGJbpMsydeXam8hmHgPqvTdSjWHqkmGon5MOV4FMJLYpay2jx1EhY-xDPegvhdDyNpel3jX-yG4xlnSa-PngLhnYGw; loid=000000000la4yfh1d8.2.1696691761491.Z0FBQUFBQmxJWG9JdHY3N1Z3QTZEMndOVTdKMzZCVm5LWHJkd3hsQjkzc1Z1N3RNWFhhX2lRYUZCV01tR3B5VFA3VUVpNWU4RFgyRWhMU2xZX0Fyd1ViVklXVHl3a1lQemt1WWV5UG1VcXJ3Z1YxTXlzaElIYVV4S3pJNVB0VnZiWFhRbHJscUVrNDk; session_tracker=bbfajmcbhaqaciaqff.0.1696699700473.Z0FBQUFBQmxJWlUwUWI1NWN1eDJFMlpjTEtKcDR5Wmlxc1BYeXhDWl83YVJfbzV0NGNQdXRGVHNzRXpGRUV1YnNDYU42LThlRjFpb1Y1d1ZFeFhILWR0MjZta0ZzbzEwWjBuN3NDMUk2a0VSRnowQ0Q3WUhmVURGV3VBLUNvRERnNW9RQzg5eE11QXA",
+    "Cache-Control":"no-cache",
+    "Accept":"*/*",
+    "Accept-Encoding":"gzip, deflate, br",
+    "Connection":"keep-alive",
+    "Authorization": "bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlNIQTI1NjpzS3dsMnlsV0VtMjVmcXhwTU40cWY4MXE2OWFFdWFyMnpLMUdhVGxjdWNZIiwidHlwIjoiSldUIn0.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNjk2Nzc4NzkyLjMzNzg3NCwiaWF0IjoxNjk2NjkyMzkyLjMzNzg3NCwianRpIjoiX2xWR2Z0enpWRmZuaENEajFad0Roc2NSeTFGcEdnIiwiY2lkIjoianJTZ0l4bWpwVGlKak1qU0tPRVJ2QSIsImxpZCI6InQyX2xhNHlmaDFkOCIsImFpZCI6InQyX2xhNHlmaDFkOCIsImxjYSI6MTY5NjY5MTc2MTQ5MSwic2NwIjoiZUp5S1Z0SlNpZ1VFQUFEX193TnpBU2MiLCJmbG8iOjl9.MPzPdcn89S9nohb4Ea1VOK2Kn04nhynDMOaNvKSdwdZddJeWbOGItNGwJxmfrCOSANUWf1H_NfyETh2Rsh9YjmWYGUJ4RZE8Li6olhmkcCgUFvrbgwbgePvNSVhgybyJdEoldEANHsig8oqvU_wifUecQ4IAoeAbdOpZtplLHVzRBATx5K0Kk7fzS-prE-5VNitLMRFv5f3RH-32kJEj_rWGj6hGnEMim0xJ5YSCGNbPdA5KCLdXWY_YDzawlmWU_WSuWQXeE_mcFsO-E9TqTGN0PZgc9FNrnyQTldbkzNBnFMpJ5wIjxvm6xa5xzsrs8UCMQ0wpIQy3Y37rusL7ng",
+  }
+
+  url = "https://oauth.reddit.com/subreddits/search?q="+paramter
+  response = requests.get(url, headers=headers)
+  data = response.json()
+  resp=[]
+  # Print the response content (you can also parse it as needed)
+  print(data.keys())  # Print the keys in the response dictionary
+  children = data["data"]["children"]
+  for child in children:
+    subreddit_data = child["data"]
+    resp.append({
+        "name":subreddit_data["display_name"],
+        "title": subreddit_data["title"],
+        "subscribers": subreddit_data["subscribers"]
+    })
+
+  return resp
+
+@app.post("/api/reddit")
+def api_reddit(request_data: TextReddit):
+    jobname = request_data.text  
+    print(jobname) 
+    return reddit(jobname)
+
 @app.post("/chat")
 def chat(request_data: TextRequest):
     text = request_data.text   
@@ -151,7 +189,7 @@ def chat(request_data: TextRequest):
             return {"text": listQuestions[int(meta[0])]}
     else:
         if predicted_labels == 0:
-            return {"text": request_jobs_model(text)}
+            return {"text": request_jobs_model(context)}
         elif predicted_labels == 1:
             return {"text": request_intent_model(text)}
         else:
