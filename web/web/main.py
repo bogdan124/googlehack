@@ -50,7 +50,8 @@ TRAIN = ["I love my job in data science",
         "Machine learning and AI are fascinating fields.",
         "I like to write code and I am passionate about life.",
         "what job can I have?",
-        "how are you?"]
+        "how are you?",
+        "can you recommand a job for me","what you know about me?"]
 
 LABELS = ["questions about me", 
             "casual text related",
@@ -58,7 +59,8 @@ LABELS = ["questions about me",
              "casual text related", 
              "questions about me", 
              "jobs related",
-             "casual text related"]
+             "casual text related",
+             "jobs related","questions about me"]
 
 
 listQuestions = [
@@ -96,12 +98,11 @@ def request_information_model(text, context):
     # Define the data you want to include in the POST request (if any)
     data = {
         "question":text,
-        "context": context
+        "context": context+"hi"
     }
 
     # Send the POST request
     response = requests.post(url, data=json.dumps(data), headers=headers)    
-
     return response.json()
 
 def request_jobs_model(text):
@@ -121,6 +122,7 @@ def request_jobs_model(text):
 class TextRequest(BaseModel):
     text: str
     metadata: list[str]
+    context: str
 
 class TextLogin(BaseModel):
     mail: str
@@ -133,6 +135,7 @@ class TextRegister(BaseModel):
 @app.post("/chat")
 def chat(request_data: TextRequest):
     text = request_data.text   
+    context = request_data.context
     meta = request_data.metadata 
 
     # Call the function to get predicted labels for the new text data
@@ -152,9 +155,7 @@ def chat(request_data: TextRequest):
         elif predicted_labels == 1:
             return {"text": request_intent_model(text)}
         else:
-            context = "Hi"
             return {"text": request_information_model(text,context) }
-
 
 @app.post("/api/login")
 async def api_login(request_data: TextLogin):

@@ -106,6 +106,7 @@
           padding: 10px;
           list-style-type: none;
           display: grid;
+          padding-bottom: 6em;
         }
 
         .message {
@@ -145,20 +146,27 @@
         }
 
         .message-input {
-          display: flex;
+          display: block;
           align-items: center;
           justify-content: space-between;
           padding: 10px;
           border-top: 1px solid #ddd;
+          background: white;
+          width: 100%;
+          margin-left: -32px;
         }
+
+
 
         .message-input input {
           flex: 1;
           padding: 8px;
+          width: 80%;
           border: none;
           border-radius: 20px;
           margin-right: 10px;
           outline: none;
+          margin-top: 12px;
         }
 
         .message-input button {
@@ -178,7 +186,6 @@
 
         .feedback-buttons {
           display: flex;
-          justify-content: space-between;
           margin-top: 10px;
         }
 
@@ -203,6 +210,11 @@
           margin-left: 1px;
         }
 
+        .tag-feedback .token {
+          color: #0073e6;
+          background-color: #f0f2f5;
+        }
+
         .chatbot-response {
           background-color: #f0f2f5;
           padding: 10px;
@@ -219,6 +231,10 @@
         .contact-details p {
           margin: 0;
         }
+
+        .more-data {
+          background-color: #e5e5e5 !important;
+        }
       </style>
 
 
@@ -231,13 +247,104 @@
         </li>
         <!-- Add more messages here -->
       </ul>
+
       <div class="message-input">
+        <div class="feedback-buttons tag-feedback">
+          <button class="feedback-button token" onclick="sendMessageFeedback('Start the interview questions',0)">Start
+            the
+            interview
+            questions</button>
+          <button class="feedback-button token" onclick="sendMessageFeedback('cancel',0)">Bye</button>
+          <button class="feedback-button token" onclick="sendMessageFeedback('cancel',0)">Cancel</button>
+        </div>
         <input type="text" id="text_chatbot" placeholder="Type your message...">
         <button onclick="sendMessage()">Send</button>
       </div>
 
       <script>
+        let IS_IN_INTERVIEW = 0;
+        let NUMBER_QUESTION_FORMAT = 0;
+        let STORE_RESPONSE = "";
+
+        function speechText(textToSpeechInput) {
+
+          // Check if speech synthesis is supported in the current browser
+          if ('speechSynthesis' in window) {
+            const synth = window.speechSynthesis;
+            const text = textToSpeechInput.value;
+            const utterance = new SpeechSynthesisUtterance(textToSpeechInput);
+            // Speak the provided text
+            synth.speak(utterance);
+          } else {
+            // Speech synthesis not supported
+            alert('Sorry, your browser does not support speech synthesis.');
+          }
+        }
+
+        function sendMessageFeedback(message_feedback, number) {
+          appendDataSimpleUser(message_feedback);
+          if (message_feedback == "cancel") {
+            IS_IN_INTERVIEW = 0;
+          } else {
+            IS_IN_INTERVIEW = 1;
+          }
+
+          const url = 'http://0.0.0.0:8080/chat';
+          const data = {
+            text: message_feedback,
+            metadata: [NUMBER_QUESTION_FORMAT.toString()],
+            context: STORE_RESPONSE
+          };
+          NUMBER_QUESTION_FORMAT += 1;
+
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              // Add any other headers if needed
+            },
+            body: JSON.stringify(data)
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+
+              return response.json(); // You can use response.text() for plain text response
+            })
+            .then(data => {
+              // Handle the JSON data here
+              console.log(data);
+              appendDataSimple(data.text);
+            })
+            .catch(error => {
+              // Handle any errors that occurred during the fetch
+              console.error('Fetch error:', error);
+            });
+        }
+
+        const messageInputButton = document.getElementById("text_chatbot")
+        messageInputButton.addEventListener("keydown", function (event) {
+          console.log(event);
+          // Check if the pressed key is "Enter" (key code 13)
+          if (event.keyCode === 13) {
+            event.preventDefault(); // Prevent the default form submission
+
+            if (IS_IN_INTERVIEW == 0) {
+              sendMessage();
+            } else {
+              let text = document.getElementById("text_chatbot").value;
+              STORE_RESPONSE += " ";
+              STORE_RESPONSE += text;
+              console.log(STORE_RESPONSE);
+              sendMessageFeedback(text, NUMBER_QUESTION_FORMAT);
+            }
+
+          }
+        });
+
         function sendMessage() {
+
           let text = document.getElementById("text_chatbot").value;
           let messageList = document.getElementById("message_id_put");
 
@@ -249,7 +356,111 @@
 
           // Clear the input field
           document.getElementById("text_chatbot").value = "";
+          if (IS_IN_INTERVIEW == 0) {
+            const url = 'http://0.0.0.0:8080/chat';
+            const data = {
+              text: text,
+              metadata: [],
+              context: STORE_RESPONSE
+            };
 
+
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                // Add any other headers if needed
+              },
+              body: JSON.stringify(data)
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+
+                return response.json(); // You can use response.text() for plain text response
+              })
+              .then(data => {
+                // Handle the JSON data here
+                console.log(data);
+                if (data.text.answer) {
+                  appendDataSimple(data.text.answer);
+                }
+                if (data.text.jobs) {
+                  console.log(data);
+                  appendJobsData(data.text.jobs);
+                } else {
+                  appendDataSimple(data.text.response);
+                }
+
+              })
+              .catch(error => {
+                // Handle any errors that occurred during the fetch
+                console.error('Fetch error:', error);
+              });
+          } else {
+            STORE_RESPONSE += " ";
+            STORE_RESPONSE += text;
+            console.log(STORE_RESPONSE);
+            appendDataSimple();
+          }
+
+        }
+
+        function appendJobsData(jobs_data) {
+          speechText("you have a couple of jobs waiting for you!");
+          console.log(jobs_data["Job Description"]);
+          let messageList = document.getElementById("message_id_put");
+          // Simulate a response from the chatbot
+          for (var key in jobs_data["Job Description"]) {
+
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+            <li class="message received">
+              <b>${jobs_data["Job Title"][key]}</b><br/>
+              <p><button class="feedback-button token more-data">More</button>
+                <button class="feedback-button token more-data" onclick='specialist()'>Specialist</button>
+                <button class="feedback-button token more-data" onclick='reddit_api()'>Groups</button></p> 
+            </li>
+          `;
+            console.log(jobs_data["Job Title"][key], jobs_data["Job Description"][key]);
+            messageList.appendChild(chatbotResponse);
+
+          }
+        }
+
+
+        function appendDataSimple(text_data) {
+          let messageList = document.getElementById("message_id_put");
+          // Simulate a response from the chatbot
+          setTimeout(function () {
+            speechText(text_data);
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+            <li class="message received">
+              <p>${text_data}</p>
+            </li>
+          `;
+            messageList.appendChild(chatbotResponse);
+          }, 500); // Simulated delayed response (1 second)
+        }
+
+        function appendDataSimpleUser(text_data) {
+          let messageList = document.getElementById("message_id_put");
+          // Create and append the user's message
+          let userMessage = document.createElement("li");
+          userMessage.classList.add("message", "sent");
+          userMessage.innerHTML = `<p>${text_data}</p>`;
+          messageList.appendChild(userMessage);// Simulated delayed response (1 second)
+        }// Simulated delayed response (1 second)
+
+
+
+
+        function appendDataPhoneNumber() {
+          let messageList = document.getElementById("message_id_put");
           // Simulate a response from the chatbot
           setTimeout(function () {
             let chatbotResponse = document.createElement("li");
