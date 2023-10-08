@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SigTeam Job Recommender System | #2030 Hackathon</title>
+
+  <!-- CSS Links -->
+  <link rel="stylesheet" href="static/css/sidebar2.css" />
+  <link rel="stylesheet" href="static/css/avatar.css" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+
+  <!-- JavaScript Links -->
+  <script src="static/js/chat.js"></script>
+  <script src="static/js/avatar.js"></script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="menu-toggle">
+      <div class="hamburger">
+        <span></span>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+
+      <div class="avatar" id="avatar">
+        <div id="preview">
+          <img src="static/img/animated-1.gif" id="avatar-image" class="avatar_img" style="margin-top:10px"/>
+        </div>
+        <div class="avatar_upload">
+          <label class="upload_label">Upload
+            <input type="file" id="upload">
+          </label>
+        </div>
+      </div>
+
+      <nav class="menu">
+        <ul class="nav-links">
+          <li>
+            <a href="#" class="menu-item is-active">
+              <i class="bx bx-home-alt-2"></i>
+              <span class="title">Profile</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="menu-item">
+              <i class="bx bx-cog"></i>
+              <span class="title">Settings</span>
+            </a>
+          </li>
+          <li>
+            <a href="http://localhost:8080/auth" class="menu-item">
+              <i class="bx bx-log-out"></i>
+              <span class="title">Log Out</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <h1>Welcome!</h1>
+
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f0f2f5;
+        }
+
+        .chat-container {
+          max-width: 400px;
+          margin: 20px auto;
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+
+        .chat-header h2 {
+          font-size: 18px;
+          margin: 0;
+        }
+
+        .message-list {
+          padding: 10px;
+          list-style-type: none;
+          display: grid;
+          padding-bottom: 6em;
+        }
+
+        .message {
+          max-width: 70%;
+          margin: 5px 0;
+          padding: 10px;
+
+          border-radius: 8px;
+        }
+
+        .message.sent {
+          float: right;
+
+        }
+
+        .message-input {
+          position: fixed;
+          bottom: 1px;
+          width: 74%;
+        }
+
+        .message.sent>p {
+          margin: 0;
+          padding-left: 50px; 
+          color: white !important;
+        }
+
+        .received {
+          background-color: #f0f2f5;
+          align-self: flex-start;
+        }
+
+        .sent {
+          background-color: #198754;
+          color: white;
+          margin-left: 30%;
+          /* Added margin-left to push sent messages to the right */
+          border-radius: 8px;
+        }
+
+        .message-input {
+          display: block;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px;
+          border-top: 1px solid #ddd;
+          background: white;
+          width: 100%;
+          margin-left: -32px;
+        }
+
+        .message-input input {
+          flex: 1;
+          padding: 8px;
+          width: 80%;
+          border: none;
+          border-radius: 20px;
+          margin-right: 10px;
+          outline: none;
+          margin-top: 12px;
+        }
+
+        .message-input button {
+          background-color: #198754;
+          color: #fff;
+          border: none;
+          border-radius: 20px;
+          padding: 8px 16px;
+          cursor: pointer;
+          outline: none;
+        }
+
+        main.content {
+          width: 100%;
+          background: white;
+        }
+
+        .feedback-buttons {
+          display: flex;
+          margin-top: 10px;
+        }
+
+        .feedback-button {
+          background-color: #f0f2f5;
+          color: #0073e6;
+          border: none;
+          border-radius: 10px;
+          padding: 8px 16px;
+          cursor: pointer;
+          outline: none;
+          width: 25%;
+          /* Adjust the width as needed */
+          transition: background-color 0.3s ease-in-out;
+        }
+
+        .feedback-button:hover {
+          background-color: #f0f2f5
+        }
+
+        .feedback-button+.feedback-button {
+          margin-left: 1px;
+        }
+
+        .tag-feedback .token {
+          color: #0073e6;
+          background-color: #f0f2f5;
+        }
+
+        .chatbot-response {
+          background-color: #f0f2f5;
+          padding: 10px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+        }
+
+        .contact-details {
+          border-top: 1px solid #ddd;
+          margin-top: 10px;
+          padding-top: 10px;
+        }
+
+        .contact-details p {
+          margin: 0;
+        }
+
+        .more-data {
+          background-color: #e5e5e5 !important;
+        }
+
+        /* Add or modify these styles */
+
+        /* Style for the user's message */
+        .message.sent {
+            display: flex;
+            align-items: flex-start;
+            background-color: #198754;
+            color: white; 
+            border-radius: 8px;
+            padding: 10px;
+            max-width: 70%;
+            position: relative;
+        }
+
+        /* Style for the user's icon */
+        .user-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 28px; 
+            height: auto; 
+            border-radius: 50%;
+            margin: 5px;
+        }
+
+        /* Style for the user's message text */
+        .message.sent p {
+            margin: 0; 
+            padding-left: 50px; 
+            color: white !important; 
+        }
+
+      </style>
+
+
+      <ul class="message-list" id="message_id_put">
+        <li class="message received">
+          <p>Hello there!</p>
+        </li>
+        <li class="message sent">
+          <div class="row">
+            <div class="col-2">
+              <div class="user-icon">
+                <img src="static/img/animated-1-logo.png" alt="user-img" style="width: 28px; height: 28px">
+              </div>
+            </div>
+            <div class="col-10">
+              <p>Hi! How can you help me?</p>
+            </div>
+          </div>
+        </li>
+        <!-- Add more messages here -->
+      </ul>
+
+      <div class="message-input">
+        <div class="feedback-buttons tag-feedback">
+          <button class="feedback-button token" onclick="sendMessageFeedback('Start the interview questions',0)">Start
+            the
+            interview
+            questions</button>
+          <button class="feedback-button token" onclick="sendMessageFeedback('cancel',0)">Bye</button>
+          <button class="feedback-button token" onclick="sendMessageFeedback('cancel',0)">Cancel</button>
+        </div>
+        <input type="text" id="text_chatbot" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+      </div>
+
+      <script>
+        let IS_IN_INTERVIEW = 0;
+        let NUMBER_QUESTION_FORMAT = 0;
+        let STORE_RESPONSE = "";
+
+        function speechText(textToSpeechInput) {
+
+          // Check if speech synthesis is supported in the current browser
+          if ('speechSynthesis' in window) {
+            const synth = window.speechSynthesis;
+            const text = textToSpeechInput.value;
+            const utterance = new SpeechSynthesisUtterance(textToSpeechInput);
+            // Speak the provided text
+            synth.speak(utterance);
+          } else {
+            // Speech synthesis not supported
+            alert('Sorry, your browser does not support speech synthesis.');
+          }
+        }
+
+        function sendMessageFeedback(message_feedback, number) {
+          appendDataSimpleUser(message_feedback);
+          if (message_feedback == "cancel") {
+            IS_IN_INTERVIEW = 0;
+          } else {
+            IS_IN_INTERVIEW = 1;
+          }
+
+          const url = 'http://0.0.0.0:8080/chat';
+          const data = {
+            text: message_feedback,
+            metadata: [NUMBER_QUESTION_FORMAT.toString()],
+            context: STORE_RESPONSE
+          };
+          NUMBER_QUESTION_FORMAT += 1;
+
+          fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              // Add any other headers if needed
+            },
+            body: JSON.stringify(data)
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+
+              return response.json(); // You can use response.text() for plain text response
+            })
+            .then(data => {
+              // Handle the JSON data here
+              console.log(data);
+              appendDataSimple(data.text);
+            })
+            .catch(error => {
+              // Handle any errors that occurred during the fetch
+              console.error('Fetch error:', error);
+            });
+        }
+
+        const messageInputButton = document.getElementById("text_chatbot")
+        messageInputButton.addEventListener("keydown", function (event) {
+          console.log(event);
+          // Check if the pressed key is "Enter" (key code 13)
+          if (event.keyCode === 13) {
+            event.preventDefault(); // Prevent the default form submission
+
+            if (IS_IN_INTERVIEW == 0) {
+              sendMessage();
+            } else {
+              let text = document.getElementById("text_chatbot").value;
+              STORE_RESPONSE += " ";
+              STORE_RESPONSE += text;
+              console.log(STORE_RESPONSE);
+              sendMessageFeedback(text, NUMBER_QUESTION_FORMAT);
+            }
+
+          }
+        });
+
+        function sendMessage() {
+
+          let text = document.getElementById("text_chatbot").value;
+          let messageList = document.getElementById("message_id_put");
+
+          // Create and append the user's message
+          let userMessage = document.createElement("li");
+          userMessage.classList.add("message", "sent");
+          //userMessage.innerHTML = `<p>${text}</p>`;
+          userMessage.innerHTML =  `<div class="row">
+                                      <div class="col-2">
+                                        <div class="user-icon">
+                                          <img src="static/img/animated-1-logo.png" alt="user-img" style="width: 28px; height: 28px">
+                                        </div>
+                                      </div>
+                                      <div class="col-10">
+                                          <p>${text}</p>
+                                      </div>
+                                    </div>`;
+          messageList.appendChild(userMessage);
+
+          // Clear the input field
+          document.getElementById("text_chatbot").value = "";
+          if (IS_IN_INTERVIEW == 0) {
+            const url = 'http://0.0.0.0:8080/chat';
+            const data = {
+              text: text,
+              metadata: [],
+              context: STORE_RESPONSE
+            };
+
+
+            fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                // Add any other headers if needed
+              },
+              body: JSON.stringify(data)
+            })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+
+                return response.json(); // You can use response.text() for plain text response
+              })
+              .then(data => {
+                // Handle the JSON data here
+                console.log(data);
+                if (data.text.answer) {
+                  appendDataSimple(data.text.answer);
+                }
+                if (data.text.jobs) {
+                  console.log(data);
+                  appendJobsData(data.text.jobs);
+                } else {
+                  appendDataSimple(data.text.response);
+                }
+
+              })
+              .catch(error => {
+                // Handle any errors that occurred during the fetch
+                console.error('Fetch error:', error);
+              });
+          } else {
+            STORE_RESPONSE += " ";
+            STORE_RESPONSE += text;
+            console.log(STORE_RESPONSE);
+            appendDataSimple();
+          }
+
+        }
+
+        function appendJobsData(jobs_data) {
+          speechText("you have a couple of jobs waiting for you!");
+          console.log(jobs_data["Job Description"]);
+          let messageList = document.getElementById("message_id_put");
+          // Simulate a response from the chatbot
+          for (var key in jobs_data["Job Description"]) {
+
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+            <li class="message received">
+              <b>${jobs_data["Job Title"][key]}</b><br/>
+              <p><button class="feedback-button token more-data">More</button>
+                <button class="feedback-button token more-data" onclick='specialist()'>Specialist</button>
+                <button class="feedback-button token more-data" onclick='reddit_api()'>Groups</button></p> 
+            </li>
+          `;
+            console.log(jobs_data["Job Title"][key], jobs_data["Job Description"][key]);
+            messageList.appendChild(chatbotResponse);
+
+          }
+        }
+
+
+        function appendDataSimple(text_data) {
+          let messageList = document.getElementById("message_id_put");
+          // Simulate a response from the chatbot
+          setTimeout(function () {
+            speechText(text_data);
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+            <li class="message received">
+              <p>${text_data}</p>
+            </li>
+          `;
+            messageList.appendChild(chatbotResponse);
+          }, 500); // Simulated delayed response (1 second)
+        }
+
+        function appendDataSimpleUser(text_data) {
+          let messageList = document.getElementById("message_id_put");
+          // Create and append the user's message
+          let userMessage = document.createElement("li");
+          userMessage.classList.add("message", "sent");
+          userMessage.innerHTML = `<p>${text_data}</p>`;
+          messageList.appendChild(userMessage);// Simulated delayed response (1 second)
+        }// Simulated delayed response (1 second)
+
+
+
+
+        function appendDataPhoneNumber() {
+          let messageList = document.getElementById("message_id_put");
+          // Simulate a response from the chatbot
+          setTimeout(function () {
+            let chatbotResponse = document.createElement("li");
+            chatbotResponse.classList.add("message", "received");
+            chatbotResponse.innerHTML = `
+                        <div class="chatbot-response">
+                            <p>These are the contact details of a specialist who can help you</p>
+                            <div class="contact-details">
+                                <p><strong>Full Name:</strong> Johnny </p>
+                                <p><strong>Phone Number:</strong> +1234567890</p>
+                                <p><strong>Price:</strong> $50</p>
+                            </div>
+                        </div>
+                    `;
+            messageList.appendChild(chatbotResponse);
+
+            // Feedback buttons
+            let feedbackButtonsDiv = document.createElement("div");
+            feedbackButtonsDiv.classList.add("feedback-buttons");
+            let feedbackButton1 = document.createElement("button");
+            let feedbackButton2 = document.createElement("button");
+            feedbackButton1.classList.add("feedback-button");
+            feedbackButton2.classList.add("feedback-button");
+            feedbackButton1.textContent = "Good";
+            feedbackButton2.textContent = "Bad";
+            feedbackButtonsDiv.appendChild(feedbackButton1);
+            feedbackButtonsDiv.appendChild(feedbackButton2);
+            messageList.appendChild(feedbackButtonsDiv);
+          }, 1000); // Simulated delayed response (1 second)
+        }
+
+      </script>
+    </main>
+  </div>
+
+  <script>
+    const menu_toggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+
+    menu_toggle.addEventListener('click', () => {
+      menu_toggle.classList.toggle('is-active');
+      sidebar.classList.toggle('is-active');
+    });
+  </script>
+</body>
+
+</html>
